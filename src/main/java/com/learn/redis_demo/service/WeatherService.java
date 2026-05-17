@@ -2,6 +2,8 @@ package com.learn.redis_demo.service;
 
 import com.learn.redis_demo.entity.Weather;
 import com.learn.redis_demo.repository.WeatherRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,25 @@ public class WeatherService {
         this.weatherRepository = weatherRepository;
     }
 
-    @Cacheable("weather")
+    @Cacheable(value = "weather", key = "#city")
     public String getWeatherByCity(String city) {
         System.out.println("Fetching Data from DB for city: " + city);
         Optional<Weather> weather = weatherRepository.findByCity(city);
         return weather.map(Weather::getForecast).orElse("Weather data not available");
+    }
+
+    @CachePut(value = "weather", key = "#city")
+    public String updateWeather(String city, String weatherUpdate) {
+        weatherRepository.findByCity(city).ifPresent(weather -> {
+            weather.setForecast(weatherUpdate);
+            weatherRepository.save(weather);
+        });
+        return weatherUpdate;
+    }
+
+    @CacheEvict(value = "weather", key = "#city")
+    public void deleteWeather(String city) {
+        System.out.println("Removing weather data for city: " + city);
+        weatherRepository.deleteByCity(city);
     }
 }

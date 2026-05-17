@@ -9,6 +9,5 @@ In memory cache is fine when you have a single node. but when you have multiple,
 Annotation used in caching
 @EnableCaching -> Enable us to make use of caching
 @Cacheable
-@CachePut
-@CacheEvict
-@Caching
+@CachePut -> once data in db updated, data in cache also updated
+@CacheEvict -> once data deleted from db, data will be deleted from cache as well
