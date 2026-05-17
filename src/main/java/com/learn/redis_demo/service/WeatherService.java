@@ -2,6 +2,7 @@ package com.learn.redis_demo.service;
 
 import com.learn.redis_demo.entity.Weather;
 import com.learn.redis_demo.repository.WeatherRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,6 +15,7 @@ public class WeatherService {
         this.weatherRepository = weatherRepository;
     }
 
+    @Cacheable("weather")
     public String getWeatherByCity(String city) {
         System.out.println("Fetching Data from DB for city: " + city);
         Optional<Weather> weather = weatherRepository.findByCity(city);
